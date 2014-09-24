@@ -1,6 +1,10 @@
 package com.spotify.hello;
 
+import com.google.common.io.BaseEncoding;
 import com.spotify.crtauth.CrtAuthClient;
+import com.spotify.crtauth.protocol.Challenge;
+import com.spotify.crtauth.protocol.Response;
+import com.spotify.crtauth.protocol.VerifiableMessage;
 import com.spotify.crtauth.signer.SingleKeySigner;
 import com.spotify.crtauth.utils.TraditionalKeyParser;
 
@@ -73,9 +77,15 @@ public class HelloClient {
     String challenge = target.request().get().readEntity(String.class);
     log("Got challenge %s", challenge);
 
-    String response = crtAuthClient.createResponse(challenge);
+    VerifiableMessage<Challenge> verifiableMessageDecoder =
+        VerifiableMessage.getDefaultInstance(Challenge.class);
+    VerifiableMessage<Challenge> decodedChallenge =
+        verifiableMessageDecoder.deserialize(BaseEncoding.base64Url().decode(challenge));
 
-    target = baseTarget.path("/auth/token/" + response);
+    Response response = crtAuthClient.createResponse(decodedChallenge);
+    String encodedResponse = BaseEncoding.base64Url().encode(response.serialize());
+
+    target = baseTarget.path("/auth/token/" + encodedResponse);
     String token = target.request().get().readEntity(String.class);
     log("Got token %s", token);
 
