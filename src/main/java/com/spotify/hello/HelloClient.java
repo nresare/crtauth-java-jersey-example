@@ -7,6 +7,7 @@ import com.spotify.crtauth.utils.TraditionalKeyParser;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.RSAPrivateKeySpec;
@@ -61,22 +62,25 @@ public class HelloClient {
 
   private static WebTarget makeWebTarget() {
     Client client = ClientBuilder.newClient();
-    return  client.target("http://localhost:8080/v1");
+    return  client.target("http://localhost:8080/");
   }
 
   public static void main(String[] args) throws Exception {
     WebTarget baseTarget = makeWebTarget();
     CrtAuthClient crtAuthClient = makeCrtAuthClient();
 
-    WebTarget target = baseTarget.path("/auth/challenge/test");
-    log("Requesting challenge from target %s", baseTarget.getUri());
-    String challenge = target.request().get().readEntity(String.class);
+    WebTarget target = baseTarget.path("/_auth");
+    log("Requesting challenge from target %s", target.getUri());
+    String request = CrtAuthClient.createRequest("test");
+    Response httpResponse = target.request().header("X-CHAP", "request:"+ request).get();
+    String challenge = httpResponse.getHeaderString("X-CHAP").split(":")[1];
     log("Got challenge %s", challenge);
 
     String response = crtAuthClient.createResponse(challenge);
 
-    target = baseTarget.path("/auth/token/" + response);
-    String token = target.request().get().readEntity(String.class);
+    target = baseTarget.path("/_auth");
+    httpResponse = target.request().header("X-CHAP", "response:" + response).get();
+    String token = httpResponse.getHeaderString("X-CHAP").split(":")[1];
     log("Got token %s", token);
 
     target = baseTarget.path("/hello/" + token);
