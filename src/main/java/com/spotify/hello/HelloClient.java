@@ -1,8 +1,6 @@
 package com.spotify.hello;
 
 import com.spotify.crtauth.CrtAuthClient;
-import com.spotify.crtauth.agentsigner.AgentSigner;
-import com.spotify.crtauth.signer.Signer;
 import com.spotify.crtauth.signer.SingleKeySigner;
 import com.spotify.crtauth.utils.TraditionalKeyParser;
 
