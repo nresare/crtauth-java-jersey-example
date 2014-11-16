@@ -1,5 +1,6 @@
 package com.spotify.crtauth.example;
 
+import com.google.common.io.CharStreams;
 import com.spotify.crtauth.CrtAuthServer;
 import com.spotify.crtauth.keyprovider.InMemoryKeyProvider;
 import com.spotify.crtauth.utils.TraditionalKeyParser;
@@ -8,6 +9,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.security.KeyFactory;
@@ -26,11 +28,14 @@ import java.util.logging.Logger;
  */
 public class Server {
 
-  private static final String PUBLIC_KEY = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDK0wNhgGlFZfBo" +
-      "RBS+M8wGoyOOVunYYjeaoRXKFKfhx288ZIo87WMfN6i5KnUTH3A/mYlVnK4bhchS6dUFisaXcURvFgY46pUSGuLTZ" +
-      "xTe9anIIR/iT+V+8MRDHXffRGOCLEQUl0leYTht0dc7rxaW42d83yC7uuCISbgWqOANvMkZYqZjaejOOGVpkApxLG" +
-      "G8K8RvNBBM8TYqE3DQHSyRVU6S9HWLbWF+i8W2h4CLX2Quodf0c1dcqlftClHjdIyed/zQKhAo+FDcJrN+2ZDJ0mk" +
-      "YLVlJDZuLk/K/vSOwD3wXhby3cdHCsxnRfy2Ylnt31VF0aVtlhW4IJ+5mMzmz noa@date.office.spotify.net";
+  private static final String PUBLIC_KEY;
+  static {
+    try {
+      PUBLIC_KEY = CharStreams.toString(new FileReader("id_rsa.pub"));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
 
   public static void main(String[] args) throws IOException {
