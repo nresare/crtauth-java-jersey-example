@@ -1,6 +1,8 @@
 package com.spotify.hello;
 
 import com.spotify.crtauth.CrtAuthClient;
+import com.spotify.crtauth.agentsigner.AgentSigner;
+import com.spotify.crtauth.signer.Signer;
 import com.spotify.crtauth.signer.SingleKeySigner;
 import com.spotify.crtauth.utils.TraditionalKeyParser;
 
@@ -83,8 +85,8 @@ public class HelloClient {
     String token = httpResponse.getHeaderString("X-CHAP").split(":")[1];
     log("Got token %s", token);
 
-    target = baseTarget.path("/hello/" + token);
-    String helloOutput = target.request().get().readEntity(String.class);
+    target = baseTarget.path("/hello");
+    String helloOutput = target.request().header("Authorization", "chap:" + token).get().readEntity(String.class);
     log("Output from /hello: " + helloOutput);
 
   }

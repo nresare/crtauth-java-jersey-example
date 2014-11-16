@@ -44,12 +44,12 @@ public class JerseyResource {
 
   }
 
-  @Path("/hello/{token}")
+  @Path("/hello")
   @GET
-  public String hello(@PathParam("token") String token) {
+  public String hello(@HeaderParam("Authorization") String authorization) {
     String username;
     try {
-      username = crtAuthServer.validateToken(token);
+      username = crtAuthServer.validateToken(authorization.split(":")[1]);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
