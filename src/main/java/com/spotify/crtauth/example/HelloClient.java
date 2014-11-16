@@ -1,22 +1,19 @@
 package com.spotify.crtauth.example;
 
 import com.spotify.crtauth.CrtAuthClient;
-import com.spotify.crtauth.signer.SingleKeySigner;
-import com.spotify.crtauth.utils.TraditionalKeyParser;
+import com.spotify.crtauth.agentsigner.AgentSigner;
+import com.spotify.crtauth.signer.Signer;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.spec.RSAPrivateKeySpec;
 
 /**
  * Very simple hello world Jersey
  */
 public class HelloClient {
-
+  /*
   private static final String PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\n" +
       "MIIEogIBAAKCAQEAytMDYYBpRWXwaEQUvjPMBqMjjlbp2GI3mqEVyhSn4cdvPGSK\n" +
       "PO1jHzeouSp1Ex9wP5mJVZyuG4XIUunVBYrGl3FEbxYGOOqVEhri02cU3vWpyCEf\n" +
@@ -44,9 +41,10 @@ public class HelloClient {
       "3QTXq7nxWpE4YwHbgXAeJUGfUpE+nEZGMolj1Q0ueKuSstQg5p1nwhQIxej8EJW+\n" +
       "7siqmOTZDKzieik7KVzaJ/U02Q186smezKIuAOYtT8VCf9UksJ4=\n" +
       "-----END RSA PRIVATE KEY-----";
-
+  */
 
   private static CrtAuthClient makeCrtAuthClient() {
+    /*
     PrivateKey privateKey;
     try {
       RSAPrivateKeySpec privateKeySpec = TraditionalKeyParser.parsePemPrivateKey(PRIVATE_KEY);
@@ -55,9 +53,10 @@ public class HelloClient {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-
-    SingleKeySigner singleKeySigner = new SingleKeySigner(privateKey);
-    return new CrtAuthClient(singleKeySigner, "localhost");
+    */
+    //Signer signer = new SingleKeySigner(privateKey);
+    Signer signer = new AgentSigner();
+    return new CrtAuthClient(signer, "localhost");
   }
 
   private static WebTarget makeWebTarget() {
